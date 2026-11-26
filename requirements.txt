@@ -1,0 +1,7 @@
+divar-mcp==0.3.0
+fastapi>=0.115,<1
+langchain-openai>=1,<2
+langgraph>=1,<2
+mcp>=2.2,<3
+python-dotenv>=1,<2
+uvicorn>=0.34,<1

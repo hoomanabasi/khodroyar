@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e1d">
+  <title>خودرویار | بازار خودرو ایران</title>
+  <link rel="icon" href="/static/brand.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/leaflet/leaflet.js" defer></script>
+  <script src="/static/chat.js" defer></script>
+  <script type="module" src="/static/workspace.js"></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="icons">
+    <symbol id="car" viewBox="0 0 24 24"><path d="m5 11 1.6-4a2 2 0 0 1 1.9-1.3h7a2 2 0 0 1 1.9 1.3l1.6 4M4 17v2m16-2v2M3 15v-2a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm3.5-1h2m7 0h2"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></symbol>
+    <symbol id="spark" viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Zm6 14 1 2.5 2.5 1-2.5 1L18 23l-1-2.5-2.5-1 2.5-1L18 16Z"/></symbol>
+    <symbol id="compare" viewBox="0 0 24 24"><path d="M4 7h15m-4-4 4 4-4 4m5 6H5m4-4-4 4 4 4"/></symbol>
+    <symbol id="tag" viewBox="0 0 24 24"><path d="M4 4h8l8 8-8 8-8-8V4Z"/><circle cx="8.5" cy="8.5" r="1"/></symbol>
+    <symbol id="price" viewBox="0 0 24 24"><path d="M4 18V6m0 12h16M7 15l4-4 3 2 5-6m-4 0h4v4"/></symbol>
+    <symbol id="map-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+    <symbol id="bell" viewBox="0 0 24 24"><path d="M5 16h14l-2-3v-3a5 5 0 1 0-10 0v3l-2 3Zm5 3a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="filter" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><path d="M8 4v6m8 4v6"/></symbol>
+    <symbol id="external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-9 9m7-1v6H5V7h6"/></symbol>
+    <symbol id="left" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12m0-12L6 18"/></symbol>
+    <symbol id="download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></symbol>
+    <symbol id="grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="gauge" viewBox="0 0 24 24"><path d="M4 17a8.5 8.5 0 1 1 16 0H4Zm8-4 4-4"/></symbol>
+    <symbol id="trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V4h6v2M7 6l1 14h8l1-14m-7 3v7m4-7v7"/></symbol>
+  </svg>
+
+  <aside id="sidebar" class="sidebar">
+    <a class="sidebar-brand" href="#search">
+      <span class="brand-mark"><svg><use href="#car"/></svg></span>
+      <span><strong>خودرویار</strong><small>دستیار بازار خودرو</small></span>
+    </a>
+    <nav class="nav" aria-label="منوی خودرویار">
+      <a href="#search" data-nav="search"><svg><use href="#grid"/></svg> کاوش خودرو</a>
+      <a href="#assistant" data-nav="assistant"><svg><use href="#spark"/></svg> دستیار هوشمند</a>
+      <a href="#compare" data-nav="compare"><svg><use href="#compare"/></svg> مقایسهٔ آگهی‌ها <span class="nav-count" id="compare-count" hidden></span></a>
+      <a href="#appraise" data-nav="appraise"><svg><use href="#tag"/></svg> ارزیابی قیمت</a>
+      <a href="#market" data-nav="market"><svg><use href="#price"/></svg> نبض بازار</a>
+      <a href="#map" data-nav="map"><svg><use href="#map-pin"/></svg> نقشهٔ آگهی‌ها</a>
+      <a href="#watch" data-nav="watch"><svg><use href="#bell"/></svg> پایش و اعلان‌ها <span class="nav-count" id="nav-unread" hidden></span></a>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="https://github.com/sepehr071/divar-mcp" target="_blank" rel="noopener"><svg><use href="#external"/></svg> منبع دادهٔ آگهی‌ها</a>
+    </div>
+  </aside>
+  <button class="scrim" id="scrim" aria-label="بستن منو" hidden></button>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="top-heading">
+        <button id="show-menu" class="icon-button menu-toggle" type="button" aria-label="باز کردن منو" aria-controls="sidebar" aria-expanded="false"><svg><use href="#menu"/></svg></button>
+        <span class="top-title" id="page-title">کاوش خودرو</span>
+      </div>
+      <div class="top-actions">
+        <span class="connection" id="workspace-status" role="status"><i></i> در حال اتصال</span>
+        <a class="icon-button notification-link" href="#watch" aria-label="اعلان‌ها"><svg><use href="#bell"/></svg><span id="notification-dot" hidden></span></a>
+        <a class="top-assistant" href="#assistant" aria-label="دستیار هوشمند"><svg><use href="#spark"/></svg> <span>بپرس از خودرویار</span></a>
+      </div>
+    </header>
+
+    <main class="page-container">
+      <section id="page-search" data-page>
+        <div class="hero">
+          <div class="hero-content">
+            <h1>ماشین بعدی‌ات را<br><span>هوشمندانه پیدا کن</span></h1>
+            <p>جست‌وجوی آگهی‌های دیوار، مقایسه و بررسی قیمت در یک‌جا.</p>
+            <div class="hero-actions">
+              <button class="button primary" id="focus-search" type="button"><svg><use href="#search"/></svg> شروع جست‌وجو</button>
+              <a class="button hero-secondary" href="#appraise">ارزیابی قیمت <svg><use href="#left"/></svg></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading search-heading" id="search-panel">
+          <div><h2>جست‌وجوی خودرو</h2><p>شهر، مدل و سقف بودجهٔ مدنظرت را وارد کن.</p></div>
+        </div>
+
+        <form id="search-form" class="surface search-form">
+          <div class="form-grid search-fields">
+            <label>مدل یا عبارت<div class="input-icon"><svg><use href="#search"/></svg><input name="model_text" placeholder="مثلاً پژو ۲۰۶ تیپ ۲" list="search-model-options" autocomplete="off"></div><datalist id="search-model-options"></datalist></label>
+            <label>شهر<div class="input-icon"><svg><use href="#map-pin"/></svg><input name="city" value="تهران" placeholder="نام شهر" list="search-city-options" autocomplete="off" required></div><datalist id="search-city-options"></datalist></label>
+            <label>سقف بودجه <small>تومان</small><input name="max_price" inputmode="numeric" autocomplete="off" placeholder="بدون محدودیت"></label>
+            <button class="button primary" type="submit"><svg><use href="#search"/></svg> جست‌وجو</button>
+          </div>
+          <details class="advanced"><summary><svg><use href="#filter"/></svg> فیلترهای بیشتر</summary>
+            <div class="form-grid secondary-fields">
+              <label>محله<input name="district" placeholder="همهٔ محله‌ها" list="search-district-options" autocomplete="off"><datalist id="search-district-options"></datalist></label>
+              <label>کف بودجه<input name="min_price" inputmode="numeric" placeholder="تومان"></label>
+              <label>از سال تولید<input name="year_min" inputmode="numeric" placeholder="مثلاً ۱۳۹۸"></label>
+              <label>تا سال تولید<input name="year_max" inputmode="numeric" placeholder="مثلاً ۱۴۰۴"></label>
+              <label>سقف کارکرد<input name="mileage" inputmode="numeric" placeholder="کیلومتر"></label>
+              <label>گیربکس<select name="gearbox"><option value="">همه</option><option value="manual">دنده‌ای</option><option value="automatic">اتوماتیک</option></select></label>
+              <label class="checkbox-label"><input name="photos" type="checkbox"> فقط آگهی عکس‌دار</label>
+            </div>
+          </details>
+        </form>
+
+        <div class="section-heading results-heading">
+          <div><h2>آگهی‌های دیوار</h2><p id="result-meta" aria-live="polite">در حال دریافت آگهی‌ها…</p></div>
+          <div class="toolbar" id="search-actions">
+            <button class="button secondary" type="button" id="save-search"><svg><use href="#bell"/></svg> ذخیرهٔ جست‌وجو</button>
+            <div class="export-control"><button class="button secondary" type="button" id="export-menu" aria-expanded="false"><svg><use href="#download"/></svg> خروجی</button><div class="popover" id="export-options" hidden><button type="button" data-format="csv">دانلود CSV</button><button type="button" data-format="jsonl">دانلود JSONL</button></div></div>
+          </div>
+        </div>
+        <div class="segmented" id="result-modes" aria-label="ترتیب و نوع نتایج">
+          <button type="button" data-mode="newest" aria-pressed="true">تازه‌ترین</button>
+          <button type="button" data-mode="cheapest" aria-pressed="false">ارزان‌ترین</button>
+          <button type="button" data-mode="value" aria-pressed="false">بهترین در بودجه</button>
+          <button type="button" data-mode="deals" aria-pressed="false">زیر قیمت نمونه</button>
+        </div>
+        <div class="card-grid" id="results" aria-busy="true"></div>
+        <div class="more-row"><button type="button" class="button secondary" id="load-more" hidden>نمایش آگهی‌های بیشتر</button></div>
+      </section>
+
+      <section id="page-assistant" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>دستیار هوشمند</h1><p>از مقایسهٔ مدل‌ها تا جست‌وجوی زندهٔ دیوار.</p></div><button id="reset" class="button secondary" type="button"><svg><use href="#plus"/></svg> گفت‌وگوی جدید</button></div>
+        <div class="surface chat-shell">
+          <div id="conversation" class="conversation">
+            <section id="welcome" class="welcome"><span class="chat-mark"><svg><use href="#spark"/></svg></span><h2>دربارهٔ خودرو چه می‌خواهی بدانی؟</h2>
+              <div class="suggestions">
+                <button type="button" data-prompt="در تهران چند آگهی پژو ۲۰۶ تیپ ۲ تا سقف ۸۰۰ میلیون تومان پیدا کن."><svg><use href="#search"/></svg> جست‌وجوی ۲۰۶ تیپ ۲ در تهران</button>
+                <button type="button" data-prompt="بازه قیمت و میانهٔ قیمت دنا پلاس مدل ۱۴۰۲ در تهران چقدر است؟"><svg><use href="#price"/></svg> قیمت دنا پلاس مدل ۱۴۰۲</button>
+                <button type="button" data-prompt="تارا و شاهین اتوماتیک را برای استفادهٔ شهری مقایسه کن."><svg><use href="#compare"/></svg> تارا یا شاهین اتوماتیک؟</button>
+                <button type="button" data-prompt="قبل از خرید خودروی دست‌دوم چه مواردی را چک کنم؟"><svg><use href="#check"/></svg> چک‌لیست خرید خودرو</button>
+              </div>
+            </section>
+            <div id="messages" class="messages" role="log" aria-label="پیام‌ها"></div>
+          </div>
+          <div class="composer-area"><form id="composer" class="composer"><label class="sr-only" for="prompt">پیام</label><textarea id="prompt" rows="1" maxlength="4000" placeholder="نام خودرو، سؤال یا لینک آگهی…" required></textarea><button id="send" class="send" type="submit" aria-label="ارسال پیام"><svg><use href="#arrow"/></svg></button></form><div class="composer-footer"><span id="connection" class="connection" role="status"><i></i> در حال بررسی سرویس</span><span><kbd dir="ltr">Shift + Enter</kbd> برای خط بعد</span></div></div>
+        </div>
+      </section>
+
+      <section id="page-compare" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>مقایسهٔ آگهی‌ها</h1><p>قیمت، وضعیت و تفاوت مشخصات آگهی‌های انتخابی را کنار هم ببین.</p></div></div>
+        <form id="compare-form" class="surface inline-form">
+          <label for="compare-link">افزودن از لینک دیوار</label><input id="compare-link" placeholder="https://divar.ir/v/…" dir="ltr" required><button class="button secondary" type="submit"><svg><use href="#plus"/></svg> افزودن</button>
+        </form>
+        <div class="selection-bar"><div id="comparison-selection"></div><button class="button primary" id="run-compare" type="button" disabled><svg><use href="#compare"/></svg> مقایسه کن</button></div>
+        <div id="comparison-result" aria-live="polite"></div>
+      </section>
+
+      <section id="page-appraise" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>ارزیابی قیمت</h1><p>قیمت یک آگهی یا مبلغ پیشنهادی را با خودروهای مشابه بسنج.</p></div></div>
+        <div class="surface panel">
+          <div class="segmented" id="appraisal-tabs"><button type="button" data-appraisal="link" aria-pressed="true">لینک آگهی</button><button type="button" data-appraisal="price" aria-pressed="false">قیمت پیشنهادی</button></div>
+          <form id="appraise-link" class="form-grid inline-task"><label>لینک یا شناسهٔ آگهی<input name="ad" required dir="ltr" placeholder="https://divar.ir/v/…"></label><button type="submit" class="button primary"><svg><use href="#tag"/></svg> بررسی قیمت</button></form>
+          <form id="appraise-price" class="form-grid appraisal-form" hidden>
+            <label>شهر<input name="city" value="تهران" list="appraise-city-options" required><datalist id="appraise-city-options"></datalist></label>
+            <label>نام دقیق مدل<input name="model_text" list="appraise-model-options" placeholder="مثلاً تارا اتوماتیک V2" required><datalist id="appraise-model-options"></datalist></label>
+            <label>سال تولید<input name="year_min" inputmode="numeric" placeholder="اختیاری"></label>
+            <label>قیمت پیشنهادی <small>تومان</small><input name="price" inputmode="numeric" required></label>
+            <button type="submit" class="button primary"><svg><use href="#tag"/></svg> بررسی قیمت</button>
+          </form>
+        </div>
+        <div id="appraisal-result" class="stack" aria-live="polite"></div>
+      </section>
+
+      <section id="page-market" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>نبض بازار</h1><p>آمار قیمت پیشنهادی آگهی‌ها و روند ثبت‌شدهٔ هر مدل.</p></div></div>
+        <form id="market-form" class="surface panel form-grid market-form">
+          <label>مدل خودرو<input name="model_text" list="market-model-options" placeholder="مثلاً تارا اتوماتیک" required><datalist id="market-model-options"></datalist></label>
+          <label>شهر<input name="city" value="تهران" list="market-city-options" required><datalist id="market-city-options"></datalist></label>
+          <label>سال تولید<input name="year_min" inputmode="numeric" placeholder="اختیاری"></label>
+          <button type="submit" class="button primary"><svg><use href="#price"/></svg> مشاهدهٔ آمار</button>
+        </form>
+        <div class="chip-row" id="tracked-series"></div>
+        <div id="market-result" class="stack" aria-live="polite"></div>
+      </section>
+
+      <section id="page-map" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>نقشهٔ آگهی‌ها</h1><p>آگهی‌های اطراف یک محله را پیدا کن. موقعیت آگهی‌ها تقریبی است.</p></div></div>
+        <form id="map-form" class="surface panel form-grid map-form">
+          <label>نشانی یا محله<input name="place" placeholder="مثلاً میدان ونک" required></label>
+          <label>مدل خودرو<input name="model_text" placeholder="همهٔ خودروها"></label>
+          <label>شعاع جست‌وجو<select name="radius"><option value="2000">۲ کیلومتر</option><option value="4000" selected>۴ کیلومتر</option><option value="8000">۸ کیلومتر</option><option value="15000">۱۵ کیلومتر</option></select></label>
+          <button type="submit" class="button primary"><svg><use href="#map-pin"/></svg> جست‌وجو روی نقشه</button>
+        </form>
+        <div id="place-choices" class="chip-row" aria-live="polite"></div>
+        <div class="surface map-shell"><div id="map-canvas" aria-label="نقشهٔ آگهی‌ها"></div></div>
+        <div id="map-result" class="stack" aria-live="polite"></div>
+      </section>
+
+      <section id="page-watch" data-page hidden>
+        <div class="section-heading page-intro"><div><h1>پایش و اعلان‌ها</h1><p>آگهی‌های تازهٔ جست‌وجوهای ذخیره‌شده را اینجا دنبال کن.</p></div><a class="button primary" href="#search"><svg><use href="#plus"/></svg> جست‌وجوی جدید</a></div>
+        <div class="watch-layout">
+          <section class="surface panel"><div class="section-heading"><div><h2>جست‌وجوهای من</h2><p id="watch-frequency"></p></div></div><div id="watch-list" class="stack"></div></section>
+          <section class="surface panel"><div class="section-heading"><h2>اعلان‌ها</h2><button id="mark-alerts" type="button" class="button secondary small">خواندن همه</button></div><div id="alert-list" class="stack"></div></section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="drawer" class="drawer" aria-labelledby="drawer-title">
+    <div class="drawer-header"><h2 id="drawer-title">جزئیات آگهی</h2><form method="dialog"><button class="icon-button" aria-label="بستن"><svg><use href="#close"/></svg></button></form></div>
+    <div id="drawer-content" class="drawer-content"></div>
+  </dialog>
+  <dialog id="save-dialog" class="save-dialog" aria-labelledby="save-title">
+    <form id="save-form" class="panel stack"><div class="section-heading"><h2 id="save-title">ذخیرهٔ جست‌وجو</h2><button type="button" class="icon-button" id="close-save" aria-label="بستن"><svg><use href="#close"/></svg></button></div>
+      <p id="save-summary"></p><label>نام جست‌وجو<input name="name" required maxlength="75" placeholder="مثلاً ۲۰۶ برای خرید"></label>
+      <button class="button primary" type="submit"><svg><use href="#bell"/></svg> ذخیره و پایش</button>
+    </form>
+  </dialog>
+  <div id="compare-dock" class="compare-dock" hidden><span><svg><use href="#compare"/></svg><strong id="dock-count"></strong></span><a class="button primary small" href="#compare">رفتن به مقایسه</a></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
